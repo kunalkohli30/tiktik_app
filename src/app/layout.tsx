@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import Navbar from "./components/Navbar";
+import Sidebar from "./components/Sidebar";
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,7 +19,21 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+
+        <GoogleOAuthProvider clientId="544148869653-1oav7n2m9hvtvvrh6nabtvl0j65ccq97.apps.googleusercontent.com">
+          <main className="flex gap-6 md:gap-20">
+            <Navbar />
+            <div className="h-[92vh] mt-[10vh] overflow-hidden xl:hover:overflow-auto">
+              <Sidebar />
+            </div>
+            <div className="mt-4 flex flex-col gap-10 overflow-auto h-[99vh] videos flex-1">
+              {children}
+            </div>
+            {/* TikTik */}
+          </main>
+        </GoogleOAuthProvider>
+      </body>
     </html>
   );
 }

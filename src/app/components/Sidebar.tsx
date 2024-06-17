@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { NextPage } from 'next';
-import { useRouter } from 'next/router';
+import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { GoogleLogin } from '@react-oauth/google';
 
@@ -21,13 +21,14 @@ const Sidebar = () => {
     const normalLink = 'flex justify-center items-center p-3 hover:bg-primary gap-3 xl:justify-start cursor-pointer font-semibold text-[#F51997] rounded-xl';
     const [showSidebar, setShowSidebar] = useState(true);
     const userProfile = false;
-
+    const pathname = usePathname();
+        
     const login = useGoogleLogin({
         onSuccess: codeResponse => console.log(codeResponse)
     });
 
     return (
-        <div>
+        <div className={pathname === '/' ? 'block' : 'hidden'}>
             <div className="block xl:hidden m-2 ml-4 mt-3 text-lg">
                 <button onClick={() => setShowSidebar((prevState) => !prevState)}>
                     {showSidebar ? <ImCancelCircle /> : <AiOutlineMenu />}

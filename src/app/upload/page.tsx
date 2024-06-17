@@ -1,7 +1,7 @@
 'use client'
 
-import React, { useState } from 'react'
-import { useRouter } from 'next/router'
+import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { FaCloudUploadAlt } from 'react-icons/fa'
 import { MdDelete } from 'react-icons/md'
 import { SanityAssetDocument } from 'next-sanity';
@@ -9,31 +9,67 @@ import { SanityAssetDocument } from 'next-sanity';
 import useAuthStore from '../../../store/authStore';
 import { client } from '../../../utils/client';
 import { topics } from '../../../utils/constants'
+import axios from 'axios'
 
 const upload = () => {
 
     const [isLoading, setIsLoading] = useState(false);
     const [videoAsset, setVideoAsset] = useState<SanityAssetDocument | undefined>();
     const [wrongFileType, setWrongFileType] = useState(false);
+    const [caption, setCaption] = useState('');
+    const [category, setCategory] = useState(topics[0]?.name);
+    const [savingState, setSavingState] = useState(false);
 
+    const { userProfile }: {userProfile: any} = useAuthStore();
+
+    const router = useRouter();
+
+    useEffect( () => console.log(videoAsset), [videoAsset]);
     const uploadVideo = async (e: any) => {
         const selectedFile = e.target.files[0];
         const fileTypes = ['video/mp4', 'video/webm', 'video/ogg'];
-
+        setWrongFileType(false);
 
         if (fileTypes.includes(selectedFile.type)) {
-            console.log('correct file type');
+            console.log('correct file type', selectedFile.type, selectedFile.name);
             client.assets.upload('file', selectedFile, {
                 contentType: selectedFile.type,
                 filename: selectedFile.name
             }).then(data => {
+                console.log('video asset uploaded', data);
                 setVideoAsset(data);
                 setIsLoading(false);
-            })
+            }).catch(e => console.log('video asset upload error', e))
         } else {
             setIsLoading(false);
             setWrongFileType(true);
             console.log('wrong file type');
+        }
+    }
+
+    const handlePost = async () => {
+        if (caption && videoAsset?._id && category) {
+            setSavingState(true);
+            const document = {
+                _type: 'post',
+                caption,
+                video: {
+                    _type: 'file',
+                    asset: {
+                        _type: 'reference',
+                        _ref: videoAsset?._id
+                    }
+                },
+                userId: userProfile?._id,
+                postedBy: {
+                    _type: 'postedBy',
+                    _ref: userProfile?._id
+                },
+                topic: category
+            };
+
+            await axios.post('http://localhost:3000/api/hello', document);
+            router.push('/');
         }
     }
 
@@ -101,13 +137,13 @@ const upload = () => {
                     <label className='text-md font-md'>Caption</label>
                     <input
                         type='text'
-                        value=''
-                        onChange={() => { }}
+                        value={caption}
+                        onChange={e => setCaption(e.target.value)}
                         className='rounded outline-none text-base border-2 border-gray-200 p-2'
                     />
                     <label className='text-md font-md'>Choose a category</label>
                     <select
-                        onChange={() => { }}
+                        onChange={e => setCategory(e.target.value)}
                         className='outline-none border-2 border-gray-200 text-base capitalize lg:p-4 p-2 rounded cursor-pointer'
                     >
                         {topics.map(topic => (
@@ -130,7 +166,7 @@ const upload = () => {
                                 Discard
                             </button>
                             <button
-                                onClick={() => { }}
+                                onClick={handlePost}
                                 type='button'
                                 className='bg-[#F51997] text-white text-base font-medium p-2 rounded w-28 lg:w-44 outline-none'
                             >

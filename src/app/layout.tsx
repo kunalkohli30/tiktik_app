@@ -24,16 +24,18 @@ export default function RootLayout({
       <body className={inter.className}>
 
         <GoogleOAuthProvider clientId="798476314558-f8vm69jaf32cvsclgtosvu2upc7i0v5k.apps.googleusercontent.com">
-          <main className="flex gap-6 md:gap-20">
+          <div className="m-auto overflow-hidden h-[100vh]">
             <Navbar />
-            <div className="h-[92vh] mt-[10vh] overflow-hidden xl:hover:overflow-auto">
-              <Sidebar />
-            </div>
-            <div className="mt-4 flex flex-col gap-10 overflow-auto h-[99vh] videos flex-1 mt-[10vh]">
-              {children}
-            </div>
-            {/* TikTik */}
-          </main>
+            <main className="flex gap-6 md:gap-20">
+              <div className="h-[92vh] mt-[10vh] overflow-hidden xl:hover:overflow-auto ">
+                <Sidebar />
+              </div>
+              <div className="mt-4 flex flex-col gap-10 overflow-auto h-[99vh] videos flex-1 mt-[10vh]">
+                {children}
+              </div>
+              {/* TikTik */}
+            </main>
+          </div>
         </GoogleOAuthProvider>
       </body>
     </html>

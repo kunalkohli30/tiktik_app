@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Video } from "../../types";
+import { Video } from "../../../types";
 import { NextPage } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -80,12 +80,12 @@ const VideoCard: NextPage<iProps> = ({ post }) => {
                     className='rounded-3xl'
                     onClick={() => console.log('video clicked')}
                 >
-                    <Link href={'/'}>
+                    <Link href={`/detail/${post._id}`}>
                         <video
                             ref={videoRef}
                             src={post.video?.asset?.url}
                             loop
-                            className='lg:w-[600px] h-[300px] md:h-[400px] lg:h-[530px] w-[200px] rounded-2xl cursor-pointer bg-gray-100 z-0'
+                            className='lg:w-[600px] h-[300px] md:h-[400px] lg:h-[530px] w-[400px] rounded-2xl cursor-pointer bg-gray-100 z-0'
                         >
 
                         </video>

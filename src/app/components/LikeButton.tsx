@@ -13,8 +13,8 @@ const LikeButton = ({ handleLike, likes }: props) => {
     const { userProfile }: any = useAuthStore();
 
     useEffect(() => {
-        const filterLikes = likes.filter(likeObj => likeObj?._ref === userProfile?._id);
-        if (filterLikes.length)
+        const filterLikes = likes && likes.filter(likeObj => likeObj?._ref === userProfile?._id);
+        if (filterLikes && filterLikes.length)
             setAlreadyLiked(true);
         else
             setAlreadyLiked(false);

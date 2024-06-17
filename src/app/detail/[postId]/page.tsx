@@ -20,6 +20,9 @@ const page = ({ params }: { params: { postId: string } }) => {
   const [postDetails, setPostDetails] = useState<Video | null>(null);
   const [playing, setPlaying] = useState(false);
   const [isVdoMuted, setIsVdoMuted] = useState(false);
+  const [comment, setComment] = useState('');
+  const [isPostingComment, setIsPostingComment] = useState(false);
+
   const videoRef = useRef<HTMLVideoElement>(null);
   const router = useRouter();
 
@@ -78,6 +81,23 @@ const page = ({ params }: { params: { postId: string } }) => {
       }
       postDetails && setPostDetails({ ...postDetails, likes: response.data.likes })
 
+    }
+  }
+
+  const addComment = async () => {
+    // e.preventDefault();
+console.log('add comment triggered', BASE_URL, postDetails?._id, userProfile._id)
+    if (userProfile && comment) {
+      setIsPostingComment(true);
+      const response = await axios.put(`${BASE_URL}/api/post/${postDetails?._id}`, {
+        userId: userProfile._id,
+        comment
+      });
+      console.log('response from server', response);
+
+      postDetails && setPostDetails({...postDetails, comments: response.data.comments});
+      setComment('');
+      setIsPostingComment(false);
     }
   }
 
@@ -158,7 +178,13 @@ const page = ({ params }: { params: { postId: string } }) => {
                 <LikeButton handleLike={handleLike} likes={postDetails?.likes} />
               )}
             </div>
-            <Comments />
+            <Comments
+              comment={comment}
+              setComment={setComment}
+              addComment={addComment}
+              isPostingComment={isPostingComment}
+              allComments={postDetails.comments}
+            />
 
           </div>
 
